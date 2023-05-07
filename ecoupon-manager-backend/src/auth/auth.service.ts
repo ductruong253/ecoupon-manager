@@ -2,13 +2,14 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from 'src/users/users.service';
 import * as bcrypt from 'bcrypt';
+import { User } from 'src/users/user.entity';
 
 
 @Injectable()
 export class AuthService {
     constructor(
         private usersService: UsersService,
-        private jwtTokenService: JwtService
+        private jwtService: JwtService
     ) { }
 
     async signup(email: string, password: string) {
@@ -25,21 +26,31 @@ export class AuthService {
         return newUser;
     }
 
-    async login(email: string, password: string) {
-        const user = await this.usersService.findOneByEmail(email)
-        if (!user) throw new NotFoundException('user not exists')
-        if (this.comparePassword(password, user.password)) {
-            const payload = {email: user.email, sub: user.id}
-            return {
-                access_token: this.jwtTokenService.sign(payload)
-            }
-        }
-        return null 
-    }
+    async login(user: any) {
+        const payload = {
+          username: user.email,
+          sub: user.id
+        };
+        return {
+          access_token: this.jwtService.sign(payload),
+        };
+      }
 
-    async validate(email: string, password: string) {
+    // async login(email: string, password: string) {
+    //     const user = await this.usersService.findOneByEmail(email)
+    //     if (!user) throw new NotFoundException('user not exists')
+    //     if (this.comparePassword(password, user.password)) {
+    //         const payload = {email: user.email, sub: user.id}
+    //         return {
+    //             access_token: this.jwtTokenService.sign(payload)
+    //         }
+    //     }
+    //     return null 
+    // }
+
+    async validateUser(email: string, password: string) {
         const user = await this.usersService.findOneByEmail(email)
-        if (user && this.comparePassword(password, user.password)) {
+        if (user && await this.comparePassword(password, user.password)) {
             return user
         }
         return null
