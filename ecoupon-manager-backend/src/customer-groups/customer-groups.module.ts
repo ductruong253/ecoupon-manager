@@ -4,10 +4,11 @@ import { CustomerGroupsController } from './customer-groups.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CustomerGroup } from './customer-groups.entity';
 import { JwtModule } from '@nestjs/jwt';
+import { Customer } from 'src/customers/customer.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([CustomerGroup]),
+    TypeOrmModule.forFeature([CustomerGroup, Customer]),
     JwtModule.register({
       secret: 'secret',
       signOptions: {
