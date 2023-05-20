@@ -9,6 +9,12 @@ export class Customer {
     @Column()
     fullName: string
 
+    @Column()
+    email: string
+
+    @Column()
+    password: string
+
     @ManyToOne(() => CustomerGroup, (group) => group.customers)
     group: CustomerGroup
 }
