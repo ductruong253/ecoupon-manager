@@ -12,23 +12,14 @@ export class AuthService {
         private jwtService: JwtService
     ) { }
 
-    // async login(user: any) {
-    //     const payload = {
-    //       username: user.email,
-    //       sub: user.id
-    //     };
-    //     return {
-    //       access_token: this.jwtService.sign(payload),
-    //     };
-    //   }
-
     async login(loginDto: LoginCustomerDto) {
         const customer = await this.customerService.getCustomerByEmail(loginDto.email)
         if (!customer) throw new UnauthorizedException('invalid credential')
         if (this.comparePassword(loginDto.password, customer.password)) {
             const payload = {email: customer.email, sub: customer.id}
             return {
-                access_token: this.jwtService.sign(payload)
+                access_token: this.jwtService.sign(payload),
+                customer: customer
             }
         }
         return null 
@@ -40,11 +31,6 @@ export class AuthService {
             return customer
         }
         return null
-    }
-
-    private async hashPassword(password: string) {
-        const saltOrRounds = 10;
-        return await bcrypt.hash(password, saltOrRounds);
     }
 
     private async comparePassword(password: string, hash: string) {

@@ -2,13 +2,14 @@ import { Body, Controller, Get, NotFoundException, Param, Post, UseGuards } from
 import { CustomerGroupsService } from './customer-groups.service';
 import { CreateUserGroupDto } from './dtos/create-user-group.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { SessionGuard } from 'src/guards/session.guard';
 
 @Controller('customer-groups')
 export class CustomerGroupsController {
     constructor(private groupService: CustomerGroupsService) {}
 
     @Post()
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(AuthGuard('jwt'), SessionGuard)
     async createUserGroup(@Body() body: CreateUserGroupDto) {
         const group = await this.groupService.create(body)
         return group

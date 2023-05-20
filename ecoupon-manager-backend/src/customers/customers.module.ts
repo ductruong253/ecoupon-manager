@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { CustomersController } from './customers.controller';
 import { CustomersService } from './customers.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -9,6 +9,7 @@ import { CustomerGroup } from 'src/customer-groups/customer-groups.entity';
 import { AuthService } from 'src/auth/auth.service';
 import { JwtStrategy } from 'src/auth/jwt.strategy';
 import { LocalStrategy } from 'src/auth/local.strategy';
+import { CurrentCustomerMiddleware } from './middlewares/current-customer.middleware';
 
 @Module({
   imports: [
@@ -23,4 +24,8 @@ import { LocalStrategy } from 'src/auth/local.strategy';
   controllers: [CustomersController],
   providers: [CustomersService, CustomerGroupsService, AuthService, JwtStrategy, LocalStrategy]
 })
-export class CustomersModule {}
+export class CustomersModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(CurrentCustomerMiddleware).forRoutes('*');
+  }
+}

@@ -22,6 +22,6 @@ import { CustomerGroup } from 'src/customer-groups/customer-groups.entity';
     })
   ],
   controllers: [AuthController],
-  providers: [AuthService, CustomersService, LocalStrategy,CustomerGroupsService]
+  providers: [AuthService, CustomersService, LocalStrategy, CustomerGroupsService]
 })
 export class AuthModule { }
