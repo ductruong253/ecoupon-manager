@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common';
 import { CustomersService } from '../customers.service';
 
-
 @Injectable()
 export class CurrentUserInterceptor implements NestInterceptor {
   constructor(private customersService: CustomersService) {}

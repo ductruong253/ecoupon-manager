@@ -18,10 +18,15 @@ import { CustomerGroup } from 'src/customer-groups/customer-groups.entity';
     PassportModule,
     JwtModule.register({
       secret: 'secret',
-      signOptions: { expiresIn: '60s' }
-    })
+      signOptions: { expiresIn: '60s' },
+    }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, CustomersService, LocalStrategy, CustomerGroupsService]
+  providers: [
+    AuthService,
+    CustomersService,
+    LocalStrategy,
+    CustomerGroupsService,
+  ],
 })
-export class AuthModule { }
+export class AuthModule {}

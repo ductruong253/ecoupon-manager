@@ -17,12 +17,18 @@ import { CurrentCustomerMiddleware } from './middlewares/current-customer.middle
     JwtModule.register({
       secret: 'secret',
       signOptions: {
-        expiresIn: '1d'
+        expiresIn: '1d',
       },
     }),
   ],
   controllers: [CustomersController],
-  providers: [CustomersService, CustomerGroupsService, AuthService, JwtStrategy, LocalStrategy]
+  providers: [
+    CustomersService,
+    CustomerGroupsService,
+    AuthService,
+    JwtStrategy,
+    LocalStrategy,
+  ],
 })
 export class CustomersModule {
   configure(consumer: MiddlewareConsumer) {

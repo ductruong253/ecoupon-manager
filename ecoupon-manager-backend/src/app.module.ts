@@ -26,13 +26,13 @@ const cookieSession = require('cookie-session');
           password: config.get('DB_PASSWORD'),
           database: config.get('DB_NAME'),
           synchronize: true,
-          autoLoadEntities: true
-        }
-      }
+          autoLoadEntities: true,
+        };
+      },
     }),
     AuthModule,
     CustomerGroupsModule,
-    CustomersModule
+    CustomersModule,
   ],
   controllers: [AppController],
   providers: [
@@ -42,7 +42,7 @@ const cookieSession = require('cookie-session');
       useValue: new ValidationPipe({
         whitelist: true,
       }),
-    }
+    },
   ],
 })
 export class AppModule {
