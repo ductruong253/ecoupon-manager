@@ -1,57 +1,43 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { UsersService } from 'src/users/users.service';
 import * as bcrypt from 'bcrypt';
-import { User } from 'src/users/user.entity';
+import { CustomersService } from 'src/customers/customers.service';
+import { LoginCustomerDto } from 'src/customers/dtos/login-customer.dto';
 
 
 @Injectable()
 export class AuthService {
     constructor(
-        private usersService: UsersService,
+        private customerService: CustomersService,
         private jwtService: JwtService
     ) { }
 
-    async signup(email: string, password: string) {
-        // See if email is in use
-        const user = await this.usersService.findOneByEmail(email);
-        if (user) {
-            throw new BadRequestException('email already existed');
+    // async login(user: any) {
+    //     const payload = {
+    //       username: user.email,
+    //       sub: user.id
+    //     };
+    //     return {
+    //       access_token: this.jwtService.sign(payload),
+    //     };
+    //   }
+
+    async login(loginDto: LoginCustomerDto) {
+        const customer = await this.customerService.getCustomerByEmail(loginDto.email)
+        if (!customer) throw new UnauthorizedException('invalid credential')
+        if (this.comparePassword(loginDto.password, customer.password)) {
+            const payload = {email: customer.email, sub: customer.id}
+            return {
+                access_token: this.jwtService.sign(payload)
+            }
         }
-        // Hash the password together
-        const hashedPsw = await this.hashPassword(password);
-        // Create a new user and save it
-        const newUser = await this.usersService.create(email, hashedPsw);
-        // return the user
-        return newUser;
+        return null 
     }
 
-    async login(user: any) {
-        const payload = {
-          username: user.email,
-          sub: user.id
-        };
-        return {
-          access_token: this.jwtService.sign(payload),
-        };
-      }
-
-    // async login(email: string, password: string) {
-    //     const user = await this.usersService.findOneByEmail(email)
-    //     if (!user) throw new NotFoundException('user not exists')
-    //     if (this.comparePassword(password, user.password)) {
-    //         const payload = {email: user.email, sub: user.id}
-    //         return {
-    //             access_token: this.jwtTokenService.sign(payload)
-    //         }
-    //     }
-    //     return null 
-    // }
-
     async validateUser(email: string, password: string) {
-        const user = await this.usersService.findOneByEmail(email)
-        if (user && await this.comparePassword(password, user.password)) {
-            return user
+        const customer = await this.customerService.getCustomerByEmail(email)
+        if (customer && await this.comparePassword(password, customer.password)) {
+            return customer
         }
         return null
     }

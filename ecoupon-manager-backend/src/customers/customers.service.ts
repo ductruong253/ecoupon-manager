@@ -38,6 +38,14 @@ export class CustomersService {
         return customer
     }
 
+    async getCustomerByEmail(email: string) {
+        if (!email) {
+            return null
+        }
+        const customer = await this.repo.findOneBy({email})
+        return customer
+    }
+
     private async hashPassword(password: string) {
         const saltOrRounds = 10;
         return await bcrypt.hash(password, saltOrRounds);

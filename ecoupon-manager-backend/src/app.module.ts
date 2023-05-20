@@ -1,9 +1,8 @@
-import { MiddlewareConsumer, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { CustomerGroupsModule } from './customer-groups/customer-groups.module';
 import { CustomersModule } from './customers/customers.module';
@@ -29,7 +28,6 @@ import { CustomersModule } from './customers/customers.module';
         }
       }
     }),
-    UsersModule,
     AuthModule,
     CustomerGroupsModule,
     CustomersModule
