@@ -1,25 +1,32 @@
 import { Module } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { UsersService } from 'src/users/users.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from 'src/users/user.entity';
-import { JwtModule, JwtService } from '@nestjs/jwt';
-import { UsersModule } from 'src/users/users.module';
+import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from './local.strategy';
+import { Customer } from 'src/customers/customer.entity';
+import { CustomersService } from 'src/customers/customers.service';
+import { CustomersModule } from 'src/customers/customers.module';
+import { CustomerGroupsService } from 'src/customer-groups/customer-groups.service';
+import { CustomerGroup } from 'src/customer-groups/customer-groups.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]),
-    UsersModule,
+    TypeOrmModule.forFeature([Customer, CustomerGroup]),
+    CustomersModule,
     PassportModule,
     JwtModule.register({
       secret: 'secret',
-      signOptions: { expiresIn: '60s' }
-    })
+      signOptions: { expiresIn: '60s' },
+    }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, UsersService, LocalStrategy]
+  providers: [
+    AuthService,
+    CustomersService,
+    LocalStrategy,
+    CustomerGroupsService,
+  ],
 })
-export class AuthModule { }
+export class AuthModule {}
