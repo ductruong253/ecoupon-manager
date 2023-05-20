@@ -1,9 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Customer } from './customer.entity';
 import { Repository } from 'typeorm';
 import { CreateCustomerDto } from './dtos/create-customer.dto';
 import { CustomerGroupsService } from 'src/customer-groups/customer-groups.service';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class CustomersService {
@@ -17,9 +18,16 @@ export class CustomersService {
         if (!group) {
             throw new NotFoundException('groupId is invalid');
         }
-        const customer = this.repo.create(customerDto)
-        customer.group = group
-        return this.repo.save(customer)
+        const email = customerDto.email
+        const customer = this.repo.findOneBy({email})
+        if (customer) throw new BadRequestException('customer email already existed')
+        // Hash the password together
+        const hashedPsw = await this.hashPassword(customerDto.password);
+        // Create a new user and save it
+        customerDto.password = hashedPsw
+        const newCustomer = this.repo.create(customerDto)
+        newCustomer.group = group
+        return this.repo.save(newCustomer)
     }
 
     async getCustomerById(id: number) {
@@ -28,5 +36,10 @@ export class CustomersService {
         }
         const customer = await this.repo.findOneBy({id})
         return customer
+    }
+
+    private async hashPassword(password: string) {
+        const saltOrRounds = 10;
+        return await bcrypt.hash(password, saltOrRounds);
     }
 }

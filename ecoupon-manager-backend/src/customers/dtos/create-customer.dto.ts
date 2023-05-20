@@ -1,4 +1,4 @@
-import { IsNumber, IsString } from "class-validator"
+import { IsEmail, IsNumber, IsString } from "class-validator"
 
 export class CreateCustomerDto {
 
@@ -7,4 +7,11 @@ export class CreateCustomerDto {
 
     @IsNumber()
     groupId: number
+
+    @IsEmail()
+    email: string
+
+    @IsString()
+    password: string
+    
 }
